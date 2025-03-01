@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  @apply bg-gray-50;
+}
+
+.container {
+  @apply max-w-4xl mx-auto p-4;
+}
+
+.card {
+  @apply bg-white rounded-lg shadow-sm p-6 mb-6;
+}
+
+.grid {
+  @apply grid gap-4;
+}
+
+.timetable-grid {
+  @apply grid gap-4;
+  grid-template-columns: repeat(8, 1fr);
+}
+
+.header-cell {
+  @apply bg-gray-100 p-2 text-center font-medium;
+}
+
+.time-cell {
+  @apply bg-blue-50 p-2 text-center;
+}
+
+.lesson-cell {
+  @apply bg-white p-2 border rounded;
+}
