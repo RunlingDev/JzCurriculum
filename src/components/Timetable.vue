@@ -93,13 +93,13 @@ export default {
   },
   methods: {
     async fetchTerms() {
-      const { data } = await axios.get('https://kq.stjszx.net/api/Attendance/GetTerms');
+      const { data } = await axios.get('https://jzkq.runling.fun/api/Attendance/GetTerms');
       this.terms = data.Data.sort((a, b) => b.TermId - a.TermId);
       this.selectedTerm = this.terms[0]?.TermId;
       await this.fetchClasses();
     },
     async fetchClasses() {
-      const { data } = await axios.get(`https://kq.stjszx.net/api/Attendance/GetClasses?termId=${this.selectedTerm}`);
+      const { data } = await axios.get(`https://jzkq.runling.fun/api/Attendance/GetClasses?termId=${this.selectedTerm}`);
       this.classes = data.Data;
     },
     handleTermChange() {
@@ -121,7 +121,7 @@ export default {
     async fetchDailyData(date) {
       try {
         const { data } = await axios.get(
-          `https://kq.stjszx.net/api/Attendance/GetCurriculumV2?attendanceDate=${date}&classId=${this.selectedClass}`
+          `https://jzkq.runling.fun/api/Attendance/GetCurriculumV2?attendanceDate=${date}&classId=${this.selectedClass}`
         );
         const validSections = data.Data.Sections.filter(section => 
           !['早读', '晚修'].some(t => section.SectionName.includes(t))
