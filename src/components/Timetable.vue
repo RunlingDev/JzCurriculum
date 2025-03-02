@@ -81,7 +81,7 @@
         Link exchange：<br>
           - <a href="https://www.hayfrp.com">HayFrp - 免费、公益的内网穿透服务！</a><br>
         <br>
-        Github Repo: <a href="https://githuub.com/RunlingDev/JzCurriculum">RunlingDev/JzCurriculum</a><br>        
+        Github Repo: <a href="https://github.com/RunlingDev/JzCurriculum">RunlingDev/JzCurriculum</a><br>        
         Powered by <a href="https://jzkq.runling.fun/teacher/#/login">jzkq.runling.fun</a>.<a href="https://jzkq.runling.fun/teacher/#/login">jzkq.runling.fun</a>是<a href="https://kq.stjszx.net/teacher/#/login">kq.stjszx.net</a>的代理转发。<br>
         © 2025 Run, All Rights Reserved.
       </div>
