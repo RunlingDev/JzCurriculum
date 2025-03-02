@@ -1,49 +1,51 @@
 <template>
-  <div>
+  <div class="w-full">
     <h3 class="text-lg font-semibold mb-4">{{ data.Class }} 周课表</h3>
     
-    <div class="overflow-x-auto">
-      <table class="w-full border-collapse table-auto">
-        <thead>
-          <tr>
-            <th class="header-cell whitespace-nowrap">时段</th>
-            <th 
-              v-for="(date, index) in weekDates" 
-              :key="date"
-              class="header-cell min-w-[120px]"
-            >
-              <div class="flex flex-col items-center justify-center h-full">
-                <span>{{ formatWeekday(index) }}</span>
-              </div>
-            </th>
-          </tr>
-        </thead>
-        
-        <tbody>
-          <tr v-for="(_, sectionIndex) in 8" :key="sectionIndex">
-            <td class="time-cell whitespace-nowrap">
-              {{ getSectionName(sectionIndex) }}
-            </td>
-            <td 
-              v-for="(dayData, dayIndex) in data" 
-              :key="dayIndex"
-              class="lesson-cell"
-            >
-              <div 
-                v-if="dayData?.Sections[sectionIndex]" 
-                class="flex flex-col items-center justify-center h-full min-h-[60px]"
+    <div class="relative max-w-full overflow-x-auto">
+      <el-scrollbar>
+        <table class="w-full border-collapse table-auto">
+          <thead>
+            <tr>
+              <th class="header-cell whitespace-nowrap">时段</th>
+              <th 
+                v-for="(date, index) in weekDates" 
+                :key="date"
+                class="header-cell min-w-[120px]"
               >
-                <div class="font-medium leading-tight">
-                  {{ dayData.Sections[sectionIndex].Dts[0]?.Subject || '-'  }}
+                <div class="flex flex-col items-center justify-center h-full">
+                  <span>{{ formatWeekday(index) }}</span>
                 </div>
-                <div class="text-sm text-gray-600 leading-tight">
-                  {{ dayData.Sections[sectionIndex].Dts[0]?.Teacher || '-'  }}
+              </th>
+            </tr>
+          </thead>
+          
+          <tbody>
+            <tr v-for="(_, sectionIndex) in 8" :key="sectionIndex">
+              <td class="time-cell whitespace-nowrap">
+                {{ getSectionName(sectionIndex) }}
+              </td>
+              <td 
+                v-for="(dayData, dayIndex) in data" 
+                :key="dayIndex"
+                class="lesson-cell"
+              >
+                <div 
+                  v-if="dayData?.Sections[sectionIndex]" 
+                  class="flex flex-col items-center justify-center h-full min-h-[60px]"
+                >
+                  <div class="font-medium leading-tight">
+                    {{ dayData.Sections[sectionIndex].Dts[0]?.Subject || '-'  }}
+                  </div>
+                  <div class="text-sm text-gray-600 leading-tight">
+                    {{ dayData.Sections[sectionIndex].Dts[0]?.Teacher || '-'  }}
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </el-scrollbar>
     </div>
   </div>
 </template>
@@ -66,6 +68,7 @@ table {
   min-height: 33px;
   line-height: 33px;
   text-align: center;
+  display: inline-block;
 }
 
 .font-medium.leading-tight {
@@ -82,15 +85,15 @@ tr:hover td {
   @apply bg-gray-50;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 480px) {
   .header-cell {
-    @apply px-2 py-1 text-sm;
+    @apply px-1.5 py-1 text-xs;
   }
   .time-cell {
-    @apply px-2 text-sm;
+    @apply px-1.5 text-xs;
   }
   .lesson-cell {
-    @apply px-1 py-0.5 text-sm;
+    @apply px-0.5 py-0 text-xs;
   }
 }
 </style>

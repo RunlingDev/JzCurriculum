@@ -39,10 +39,12 @@
           <div class="date-input">
             <el-date-picker
               v-model="selectedDate"
+              editable=false        
               type="date"
               placeholder="选择日期"
               value-format="YYYY-MM-DD"
               @change="fetchData"
+              @focus="datePickerReadonly"
             />
           </div>
           
@@ -63,11 +65,11 @@
         <DailyTimetable 
           v-if="!isWeeklyView" 
           :data="currentData" 
-          selectedDate=selectedDate
         />
         <WeeklyTimetable 
           v-else 
           :data="weeklyData" 
+          selectedDate=selectedDate
         />
       </div>
 
@@ -144,14 +146,23 @@ export default {
       this.selectedClass = null;
       this.fetchClasses();
     },
+    datePickerReadonly(){
+      this.$nextTick(() => {
+          let els = document.querySelectorAll('.el-input__inner');
+        for(var i = 0; i <= els.length-1 ; i++){
+          els[i].setAttribute('readonly','readonly');
+        }
+        })
+    },
     async fetchData() {
-      if (!this.selectedClass) return;
+      if (!this.selectedClass[1]) return;
       
       if (this.isWeeklyView) {
         const weekDates = this.getWeekDates(this.selectedDate);
         this.weeklyData = await Promise.all(
           weekDates.map(date => this.fetchDailyData(date))
         );
+        this.currentData = 1;// Issue #3
       } else {
         this.currentData = await this.fetchDailyData(this.selectedDate);
       }
@@ -165,10 +176,6 @@ export default {
         const { data } = await axios.get(
           `https://jzkq.runling.fun/api/Attendance/GetCurriculumV2?attendanceDate=${date}&classId=${this.selectedClass[1]}`
         );
-        if (!data.Data.Sections) {
-          this.$alert('该日期无课表数据', '提示');
-          return null;
-        }
         const validSections = data.Data.Sections.filter(section => 
           !['早读', '第9节课', '第10节课', '第11节课' ].some(t => section.SectionName.includes(t))
         );
