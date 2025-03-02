@@ -27,7 +27,7 @@
             :options="classOptions"
             placeholder="选择班级"
             :props="{ expandTrigger: 'hover' }"
-            @change="handleClassChange"
+            @change="fetchData"
           />
         </div>
       </div>
