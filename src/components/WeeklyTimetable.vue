@@ -63,13 +63,43 @@
   @apply px-2 py-1 text-center align-middle border border-gray-200;
 }
 
+/* 移动端调整 */
+@media (max-width: 640px) {
+  .time-cell-header,
+  .time-cell {
+    display: none;
+  }
+  table {
+    display: inline-block;
+  }
+}
+
+@media (min-width: 1024px) {
+  table {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  /* 桌面端时段列 */
+  thead tr th:first-child {
+    width: 100px !important;
+  }
+  /* 桌面端其他列 */
+  thead tr th:not(:first-child) {
+    width: calc((100% - 100px) / 7) !important;
+    min-width: 0 !important; /* 覆盖 min-w-[120px] */
+  }
+}
+
 table {
-  min-width: 800px; /* 保持最小宽度避免内容挤压 */
+  min-width: 800px;
   min-height: 33px;
   line-height: 33px;
   text-align: center;
-  display: inline-block;
+  width: 100%;
 }
+
 
 .font-medium.leading-tight {
     font-size: large;
