@@ -7,7 +7,7 @@
         <table class="w-full border-collapse table-auto">
           <thead>
             <tr>
-              <th class="header-cell whitespace-nowrap">时段</th>
+              <th class="header-cell time-cell-header whitespace-nowrap">时段</th>
               <th 
                 v-for="(date, index) in weekDates" 
                 :key="date"
