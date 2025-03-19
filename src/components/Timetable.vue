@@ -79,8 +79,12 @@
         <br>
           {{ dailyQuote }}<br>
         <br>
-        Github Repo: <a href="https://github.com/RunlingDev/JzCurriculum">RunlingDev/JzCurriculum</a><br>        
-        Powered by <a href="https://jzkq.runling.fun/teacher/#/login">jzkq.runling.fun</a>.<a href="https://jzkq.runling.fun/teacher/#/login">jzkq.runling.fun</a>是<a href="https://kq.stjszx.net/teacher/#/login">kq.stjszx.net</a>的代理转发。并由Thehotday提供服务器支持<br>
+        Link exchange：<br>
+          - <el-link type="primary" href="https://www.hayfrp.com">HayFrp - 免费、公益的内网穿透服务！</el-link><br>
+        <br>
+        Github Repo: <el-link type="primary" href="https://github.com/RunlingDev/JzCurriculum">RunlingDev/JzCurriculum</el-link><br>
+        Contributor: <el-link type="success" href="https://github.com/RunlingDev"></el-link> <el-link type="success" href="https://github.com/66622a">Thehotday</el-link>
+        Powered by <el-link type="primary" href="https://kq.stjszx.net/teacher/#/login">kq.stjszx.net</el-link>.<br>
         © 2025 Run, All Rights Reserved.
       </div>
     </div>
