@@ -77,8 +77,8 @@
         />
         <WeeklyTimetable 
           v-else 
-          :data="weeklyData" 
-          selectedDate=selectedDate
+          :data="weeklyDataWithClass" 
+          :selectedDate="selectedDate"
         />
       </div>
 
@@ -138,6 +138,24 @@ export default {
         value: grade,
         label: grade,
         children: grouped[grade] || []
+      }));
+    },
+    // 新增：带班级名的weeklyData
+    weeklyDataWithClass() {
+      // 获取当前选中班级对象
+      let classObj = null;
+      if (this.selectedClass && this.selectedClass.length === 2) {
+        classObj = this.classes.find(c => c.ClassId === this.selectedClass[1]);
+      }
+      // 组装班级名
+      let className = '';
+      if (classObj) {
+        className = `${classObj.Grade} / ${classObj.ClassName} - ${classObj.TeacherName}`;
+      }
+      // 把班级名附加到每一天的数据对象上（图片生成用）
+      return this.weeklyData.map(day => ({
+        ...day,
+        Name: className
       }));
     }
   },
