@@ -13,8 +13,11 @@
     "axios": "^1.6.2",
     "dayjs": "^1.11.10",
     "element-plus": "^2.6.3",
+    "html2canvas": "^1.4.1",
     "js-cookie": "^3.0.5",
     "pinia": "^2.1.7",
+    "unplugin-auto-import": "^19.3.0",
+    "unplugin-vue-components": "^28.7.0",
     "vue": "^3.4.19",
     "vue-router": "^4.2.5"
   },
