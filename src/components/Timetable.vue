@@ -1,5 +1,14 @@
 <template>
   <div class="main-container">
+    <!-- 顶部加载圈动画和遮罩 -->
+    <transition name="fade">
+      <div v-if="isLoading" class="spinner-mask">
+        <div class="spinner-overlay">
+          <div class="spinner"></div>
+          <span class="spinner-text">加载中…</span>
+        </div>
+      </div>
+    </transition>
     <!-- 中央内容框 -->
     <div class="content-box">
       <!-- 学期选择区域 -->
@@ -111,7 +120,8 @@ export default {
       selectedDate: new Date().toISOString().split('T')[0],
       currentData: null,
       weeklyData: [],
-      dailyQuote: ''  // 新增每日一言
+      dailyQuote: '',
+      isLoading: false // 新增加载状态
     };
   },
   computed: {
@@ -132,25 +142,29 @@ export default {
     }
   },
   async created() {
-    await this.fetchTerms();
-    // 尝试从 cookie 中读取 selectedClass
-    const savedClass = Cookies.get('selectedClass');
-    if (savedClass) {
-      try {
-        this.selectedClass = JSON.parse(savedClass);
-      } catch (e) {
-        console.error('解析 cookie 中的 selectedClass 失败：', e);
+      await this.fetchTerms();
+      // 尝试从 cookie 中读取 selectedClass
+      const savedClass = Cookies.get('selectedClass');
+      if (savedClass) {
+        try {
+          this.selectedClass = JSON.parse(savedClass);
+          // 如果cookie中有班级，直接获取课表数据
+          this.$nextTick(() => {
+            this.fetchData();
+          });
+        } catch (e) {
+          console.error('解析 cookie 中的 selectedClass 失败：', e);
+        }
       }
-    }
-  },
+    },
   mounted: async function() {
     // 在组件挂载时获取每日一言
     await this.fetchDailyQuote();
   },
   watch: {
     selectedClass(newVal) {
-      // 保存选中的班级到 cookie，7 天后过期
-      Cookies.set('selectedClass', JSON.stringify(newVal), { expires: 7 });
+      // 保存选中的班级到 cookie，15 天后过期
+      Cookies.set('selectedClass', JSON.stringify(newVal), { expires: 15 });
     }
   },
   methods: {
@@ -194,21 +208,39 @@ export default {
       });
     },
     async fetchData() {
-      if (!this.selectedClass[1]) return;
-      if (this.isWeeklyView) {
-        const weekDates = this.getWeekDates(this.selectedDate);
-        this.weeklyData = await Promise.all(
-          weekDates.map(date => this.fetchDailyData(date))
-        );
-        this.currentData = 1; // Issue #3
-      } else {
-        this.currentData = await this.fetchDailyData(this.selectedDate);
+      this.isLoading = true;
+      try {
+        if (!this.selectedClass[1]) {
+          this.isLoading = false;
+          return;
+        }
+        if (this.isWeeklyView) {
+          const weekDates = this.getWeekDates(this.selectedDate);
+          const results = await Promise.all(
+            weekDates.map(date => this.fetchDailyData(date))
+          );
+          // 只在全部都无数据时弹窗
+          if (results.every(item => !item)) {
+            this.$alert('该周无课表数据', '提示');
+          }
+          this.weeklyData = results;
+          this.currentData = 1;
+        } else {
+          const result = await this.fetchDailyData(this.selectedDate);
+          if (!result) {
+            this.$alert('该日期无课表数据', '提示');
+          }
+          this.currentData = result;
+        }
+      } finally {
+        this.isLoading = false;
       }
     },
     async fetchDailyData(date) {
+      // 日期无效直接返回，不弹窗
+      if (!date) return null;
       try {
         if (!this.selectedClass || this.selectedClass.length < 2) {
-          this.$alert('请先选择班级', '提示');
           return null;
         }
         const { data } = await axios.get(
@@ -219,15 +251,15 @@ export default {
         );
         return { ...data.Data, Sections: validSections };
       } catch (error) {
-        this.$alert('该日期无课表数据', '提示');
         return null;
       }
     },
     getWeekDates(dateStr) {
+      // 直接从该周周日（星期天）开始
       const date = new Date(dateStr);
-      const day = date.getDay();
+      const day = date.getDay(); 
       const start = new Date(date);
-      start.setDate(date.getDate() - day);
+      start.setDate(date.getDate() - day); // 回到本周周日
       return Array.from({ length: 7 }).map((_, i) => {
         const d = new Date(start);
         d.setDate(start.getDate() + i);
@@ -308,6 +340,90 @@ export default {
   padding-top: 16px;
   color: #6c757d;
   font-size: 0.875rem;
+}
+
+/* 顶部加载圈动画遮罩 */
+.spinner-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 3.5rem;
+  z-index: 9998;
+  background: rgba(255,255,255,0.7);
+  pointer-events: all;
+}
+
+/* 顶部加载圈动画样式 */
+.spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 3.5rem;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  pointer-events: none;
+  background: transparent;
+  padding-left: 1.5rem;
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #e0e0e0;
+  border-top: 3px solid #409eff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  background: transparent;
+}
+
+.spinner-text {
+  margin-left: 12px;
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+  letter-spacing: 1px;
+  user-select: none;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .main-container {
+    background-color: #18181c;
+  }
+  .content-box {
+    background: #23232a;
+    color: #e6e6e6;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+  }
+  .section-comment,
+  .footer-info {
+    color: #a0a0b0;
+  }
+  .timetable-section > div {
+    background: #23232a;
+    border-color: #33364a;
+  }
+  .spinner-mask {
+    background: rgba(24,24,28,0.7);
+  }
+  .spinner-text {
+    color: #e6e6e6;
+  }
 }
 
 /* 响应式调整 */
